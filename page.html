@@ -78,6 +78,23 @@
     .qa-price-control input{width:105px;min-height:34px;border:1px solid var(--line);padding:0 9px;background:rgba(2,4,6,.68);color:var(--bone);font:11px ui-monospace,SFMono-Regular,Consolas,monospace}
     .qa-price-control input:focus{outline:1px solid rgba(224,35,28,.65);outline-offset:2px}
     .qa-price-hint{flex:1 1 190px;margin:0;color:var(--muted);font-size:9px}
+    .qa-bonus-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:26px}
+    .qa-bonus-card{min-width:0;border:1px solid var(--line);background:rgba(7,10,13,.75)}
+    .qa-bonus-card-head{padding:16px 18px;border-bottom:1px solid var(--line-soft)}
+    .qa-bonus-card-head h3{font-size:11px;font-weight:500;letter-spacing:.13em;text-transform:uppercase}
+    .qa-bonus-card-head p{margin:5px 0 0;color:var(--muted);font-size:10px;line-height:1.6}
+    .qa-bonus-card-body{padding:16px 18px}
+    .qa-bonus-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .qa-bonus-status{min-height:36px;margin:12px 0 0;padding:10px 11px;border-left:2px solid rgba(201,162,74,.5);background:rgba(201,162,74,.05);color:#c8b47d;font-size:10px;line-height:1.6;overflow-wrap:anywhere}
+    .qa-bonus-status:empty{display:none}
+    .qa-jira-preview{width:100%;min-height:102px;margin-top:12px;border:1px solid var(--line-soft);padding:11px;background:rgba(2,4,6,.55);color:#b4bfb7;font:10px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+    .qa-visual-previews{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:13px}
+    .qa-visual-previews figure{min-width:0;margin:0}
+    .qa-visual-previews figcaption{margin-bottom:5px;color:var(--muted);font-size:8px;letter-spacing:.12em;text-transform:uppercase}
+    .qa-visual-previews img{display:block;width:100%;min-height:70px;border:1px solid var(--line-soft);background:#070a0d;object-fit:contain}
+    #qa-store.qa-visual-changed .qa-product-art{background:radial-gradient(circle at 50% 46%,rgba(255,73,46,.7),transparent 30%),linear-gradient(140deg,rgba(97,37,30,.88),rgba(22,9,10,.95))}
+    #qa-store.qa-visual-changed .qa-product-copy strong{color:#ff8878}
+    #qa-store.qa-visual-changed .qa-store-head h3{text-decoration:underline;text-decoration-color:var(--vermilion);text-underline-offset:6px}
     .qa-store-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
     .qa-store-button{min-height:34px;padding:0 13px;border:1px solid var(--line);background:transparent;color:var(--bone);font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
     .qa-store-button.primary{background:var(--bone);color:var(--ink);border-color:var(--bone)}
@@ -115,6 +132,7 @@
       .gate-stats>div:nth-child(2){border-right:1px solid var(--line-soft)}
       .qa-report-grid{grid-template-columns:repeat(2,1fr)}.qa-report-stat:nth-child(2){border-right:0}
       .qa-report-stat:nth-child(n+3){border-top:1px solid var(--line-soft)}
+      .qa-bonus-grid{grid-template-columns:1fr}
     }
     @media(max-width:560px){
       .nav-links{position:fixed;top:var(--nav-h);left:0;right:0;display:none;flex-direction:column;gap:22px;padding:24px var(--pad);background:rgba(5,7,10,.97);border-bottom:1px solid var(--line)}
@@ -212,7 +230,7 @@ Clicking checkout displays an order confirmation.</textarea>
       <div class="qa-toolbar"><p>Break a locator on purpose to see self-healing work.</p><button class="qa-btn" id="simulate-change" type="button">Simulate locator drift</button></div>
       <div class="qa-demo" data-rv="up">
         <div class="qa-browserbar"><i></i><i></i><i></i><span>sentinel-demo.local / storefront</span></div>
-        <div class="qa-store">
+        <div class="qa-store" id="qa-store">
           <div class="qa-store-head"><div><small>Field goods · No. 04</small><h3>Everyday carry</h3></div><span class="qa-cart">CART <b id="cart-count">0</b> &nbsp;·&nbsp; <b id="cart-total">$0.00</b></span></div>
           <div class="qa-product"><div class="qa-product-art" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><path d="M13 18h22l-2 20H15l-2-20Z" stroke="currentColor" stroke-width="1.2"/><path d="M18 18v-3a6 6 0 0 1 12 0v3M20 26h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="qa-product-copy"><h4>Canvas field bag</h4><p>Olive canvas · Built to last</p><strong id="product-price">$49.00</strong></div></div>
           <div class="qa-price-control"><label for="demo-price">Demo product price<input id="demo-price" type="number" min="0" max="999999.99" step="0.01" value="49.00" inputmode="decimal"></label><button class="qa-btn" id="apply-price" type="button">Update demo price</button><p class="qa-price-hint">Set the storefront price to match a ticket criterion (for example, $59). A wrong price should fail the assertion, not be self-healed.</p></div>
@@ -241,7 +259,42 @@ Clicking checkout displays an order confirmation.</textarea>
           <div class="qa-activity" id="activity-list"><div class="qa-empty">Run generated checks to see results and repairs.</div></div>
         </div>
       </div>
-      <div class="qa-footer-note">SentinelQA · Static browser demo · Mock ticket · Editable demo price · No server or API credentials</div>
+      <div class="qa-bonus-grid" aria-label="Optional feature demos">
+        <section class="qa-bonus-card">
+          <div class="qa-bonus-card-head"><h3>Bonus · Jira result update</h3><p>Preview the comment SentinelQA could attach to this issue. This static demo does not contact Jira.</p></div>
+          <div class="qa-bonus-card-body">
+            <div class="qa-bonus-controls"><button class="qa-btn" id="jira-preview-button" type="button">Preview Jira update</button></div>
+            <pre class="qa-jira-preview" id="jira-preview" aria-live="polite">Run checks, then preview a mock Jira comment.</pre>
+            <p class="qa-bonus-status" id="jira-status" role="status">Demo only · no Jira API request is sent.</p>
+          </div>
+        </section>
+        <section class="qa-bonus-card">
+          <div class="qa-bonus-card-head"><h3>Bonus · Visual regression</h3><p>Capture the demo storefront, introduce a visual change, then compare screenshots.</p></div>
+          <div class="qa-bonus-card-body">
+            <div class="qa-bonus-controls">
+              <button class="qa-btn" id="visual-baseline-button" type="button">Capture baseline</button>
+              <button class="qa-btn" id="visual-change-button" type="button">Simulate visual change</button>
+              <button class="qa-btn qa-btn-primary" id="visual-compare-button" type="button" disabled>Compare screenshots</button>
+            </div>
+            <p class="qa-bonus-status" id="visual-status" role="status">Capture a baseline screenshot to begin.</p>
+            <div class="qa-visual-previews">
+              <figure><figcaption>Baseline</figcaption><img id="visual-before" alt="Baseline screenshot preview" hidden></figure>
+              <figure><figcaption>Current</figcaption><img id="visual-after" alt="Current screenshot preview" hidden></figure>
+            </div>
+          </div>
+        </section>
+        <section class="qa-bonus-card">
+          <div class="qa-bonus-card-head"><h3>Bonus · Flaky test detection</h3><p>Repeat the same cart assertion five times to distinguish a stable result from an intermittent failure.</p></div>
+          <div class="qa-bonus-card-body">
+            <div class="qa-bonus-controls">
+              <label class="qa-toggle"><input id="flaky-fault-toggle" type="checkbox"> Inject intermittent demo failures</label>
+              <button class="qa-btn qa-btn-primary" id="flaky-run-button" type="button">Run 5 stability checks</button>
+            </div>
+            <p class="qa-bonus-status" id="flaky-status" role="status">Demo runner · no checks run yet.</p>
+          </div>
+        </section>
+      </div>
+      <div class="qa-footer-note">SentinelQA · Static browser demo · Mock Jira · Local screenshot checks · Simulated intermittent failures · No server or API credentials</div>
     </section>
 
     <footer class="foot" data-cam="5">
@@ -257,21 +310,25 @@ Clicking checkout displays an order confirmation.</textarea>
   <div id="fg-sky" aria-hidden="true"></div>
   <div class="rail" id="rail" aria-label="Page sections"></div>
   <div class="qa-toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="html2canvas.min.js"></script>
   <script src="three.min.js"></script>
   <script src="sentinel-scene.js"></script>
   <script>
     (() => {
       "use strict";
       const sample = { key: "SHOP-142", title: "Add a product to the shopping cart", criteria: ["Clicking “Add to cart” adds the product and increments the cart badge.", "The cart shows the correct item total of $49.", "Clicking checkout displays an order confirmation."] };
-      const state = { tests: [], results: [], repairs: [], drifted: false, running: false, runAt: null };
+      const state = { tests: [], results: [], repairs: [], drifted: false, running: false, bonusRunning: false, executing: false, runAt: null, jiraPreview: null, visualBaseline: null, visualSummary: null, flakySummary: null };
       const $ = id => document.getElementById(id);
-      const el = { key: $("ticket-key"), title: $("ticket-title"), criteria: $("criteria-input"), generate: $("generate-tests"), run: $("run-tests"), load: $("load-ticket"), drift: $("simulate-change"), healing: $("healing-toggle"), add: $("add-to-cart"), remove: $("remove-from-cart"), checkout: $("checkout-button"), count: $("cart-count"), total: $("cart-total"), productPrice: $("product-price"), demoPrice: $("demo-price"), applyPrice: $("apply-price"), message: $("store-message"), warning: $("drift-warning"), plan: $("test-plan"), activity: $("activity-list"), toast: $("toast"), exportReport: $("export-report") };
+      const el = { key: $("ticket-key"), title: $("ticket-title"), criteria: $("criteria-input"), generate: $("generate-tests"), run: $("run-tests"), load: $("load-ticket"), drift: $("simulate-change"), healing: $("healing-toggle"), add: $("add-to-cart"), remove: $("remove-from-cart"), checkout: $("checkout-button"), count: $("cart-count"), total: $("cart-total"), productPrice: $("product-price"), demoPrice: $("demo-price"), applyPrice: $("apply-price"), store: $("qa-store"), message: $("store-message"), warning: $("drift-warning"), plan: $("test-plan"), activity: $("activity-list"), toast: $("toast"), exportReport: $("export-report"), jiraPreviewButton: $("jira-preview-button"), jiraPreview: $("jira-preview"), jiraStatus: $("jira-status"), visualBaselineButton: $("visual-baseline-button"), visualChangeButton: $("visual-change-button"), visualCompareButton: $("visual-compare-button"), visualStatus: $("visual-status"), visualBefore: $("visual-before"), visualAfter: $("visual-after"), flakyFault: $("flaky-fault-toggle"), flakyRunButton: $("flaky-run-button"), flakyStatus: $("flaky-status") };
       let cartCount = 0;
       let productPriceCents = 4900;
       let toastTimer;
       const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
       const money = cents => `$${(cents / 100).toFixed(2)}`;
+      const bonusControls = [el.jiraPreviewButton, el.visualBaselineButton, el.visualChangeButton, el.visualCompareButton, el.flakyFault, el.flakyRunButton];
+      const canChangeDemo = () => state.executing || (!state.running && !state.bonusRunning);
       function announce(message) { el.toast.textContent = message; el.toast.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.toast.classList.remove("show"), 2800); }
+      function setBonusControlsDisabled(disabled) { bonusControls.forEach(control => { control.disabled = disabled || (control === el.visualCompareButton && !state.visualBaseline); }); }
       function resetStore() { cartCount = 0; el.count.textContent = "0"; el.total.textContent = "$0.00"; el.remove.hidden = true; el.message.textContent = ""; }
       function setProductPrice(cents) {
         productPriceCents = cents;
@@ -344,6 +401,7 @@ Clicking checkout displays an order confirmation.</textarea>
         $("run-summary").textContent = `${passed} passed · ${failed} failed${review ? ` · ${review} needs review` : ""}`;
       }
       function generate() {
+        if (state.running || state.bonusRunning) return;
         const lines = el.criteria.value.split(/\r?\n/).map(line => line.replace(/^\s*(?:[-*•]|\d+[.)])\s*/, "").trim()).filter(Boolean);
         if (!lines.length) { announce("Add at least one acceptance criterion first."); el.criteria.focus(); return; }
         state.tests = lines.map(classify);
@@ -383,38 +441,44 @@ Clicking checkout displays an order confirmation.</textarea>
         button.click();
       }
       function execute(test) {
-        resetStore();
-        if (test.kind === "checkout") {
+        state.executing = true;
+        try {
+          resetStore();
+          if (test.kind === "checkout") {
+            addProduct(test);
+            const checkout = document.querySelector(test.checkoutSelector);
+            if (!checkout) throw new Error(`Locator ${test.checkoutSelector} was not found.`);
+            checkout.click();
+            if (!el.message.textContent.toLowerCase().includes("order confirmed")) throw new Error("Checkout did not display an order confirmation.");
+            return "Order confirmation displayed after checkout.";
+          }
+          if (test.kind === "remove") {
+            addProduct(test);
+            if (el.remove.hidden) throw new Error("Remove action was not available.");
+            el.remove.click();
+            if (cartCount !== 0) throw new Error("The cart still contains an item after removal.");
+            return "Product removed and cart badge returned to zero.";
+          }
           addProduct(test);
-          const checkout = document.querySelector(test.checkoutSelector);
-          if (!checkout) throw new Error(`Locator ${test.checkoutSelector} was not found.`);
-          checkout.click();
-          if (!el.message.textContent.toLowerCase().includes("order confirmed")) throw new Error("Checkout did not display an order confirmation.");
-          return "Order confirmation displayed after checkout.";
+          if (cartCount !== 1) throw new Error(`Expected cart badge 1; received ${cartCount}.`);
+          if (test.kind === "total") {
+            const expected = test.expectedCents === null ? productPriceCents : test.expectedCents;
+            if (el.total.textContent !== money(expected)) throw new Error(`Expected cart total ${money(expected)}; received ${el.total.textContent}.`);
+            return `Cart badge is 1 and item total is ${el.total.textContent}.`;
+          }
+          return "Cart badge incremented to 1 after adding the product.";
+        } finally {
+          state.executing = false;
         }
-        if (test.kind === "remove") {
-          addProduct(test);
-          if (el.remove.hidden) throw new Error("Remove action was not available.");
-          el.remove.click();
-          if (cartCount !== 0) throw new Error("The cart still contains an item after removal.");
-          return "Product removed and cart badge returned to zero.";
-        }
-        addProduct(test);
-        if (cartCount !== 1) throw new Error(`Expected cart badge 1; received ${cartCount}.`);
-        if (test.kind === "total") {
-          const expected = test.expectedCents === null ? productPriceCents : test.expectedCents;
-          if (el.total.textContent !== money(expected)) throw new Error(`Expected cart total ${money(expected)}; received ${el.total.textContent}.`);
-          return `Cart badge is 1 and item total is ${el.total.textContent}.`;
-        }
-        return "Cart badge incremented to 1 after adding the product.";
       }
       async function run() {
-        if (state.running || !state.tests.length) return;
+        if (state.running || state.bonusRunning || !state.tests.length) return;
         state.running = true;
         state.results = [];
         state.repairs = [];
         state.runAt = Date.now();
         [el.run, el.generate, el.load, el.drift, el.criteria, el.title, el.healing, el.demoPrice, el.applyPrice].forEach(control => { control.disabled = true; });
+        setBonusControlsDisabled(true);
         el.exportReport.disabled = true;
         renderPlan(); renderReport(); updateMetrics();
         for (const test of state.tests) {
@@ -441,6 +505,7 @@ Clicking checkout displays an order confirmation.</textarea>
         }
         state.running = false;
         [el.run, el.generate, el.load, el.drift, el.criteria, el.title, el.healing, el.demoPrice, el.applyPrice].forEach(control => { control.disabled = false; });
+        setBonusControlsDisabled(false);
         el.exportReport.disabled = !state.results.length;
         renderPlan(); renderReport(); updateMetrics();
         const failed = state.results.filter(item => item.status === "fail").length;
@@ -448,10 +513,21 @@ Clicking checkout displays an order confirmation.</textarea>
         announce(failed ? `${failed} check${failed === 1 ? "" : "s"} failed. Review the report.` : review ? `${review} criterion needs human review.` : `All ${state.results.length} generated checks passed.`);
       }
       function loadSample() {
+        if (state.running || state.bonusRunning) return;
         el.key.textContent = sample.key;
         el.title.value = sample.title;
         el.criteria.value = sample.criteria.join("\n");
         setProductPrice(4900);
+        state.jiraPreview = null; state.visualBaseline = null; state.visualSummary = null; state.flakySummary = null;
+        el.jiraPreview.textContent = "Run checks, then preview a mock Jira comment.";
+        el.jiraStatus.textContent = "Demo only · no Jira API request is sent.";
+        el.visualBefore.removeAttribute("src"); el.visualBefore.hidden = true;
+        el.visualAfter.removeAttribute("src"); el.visualAfter.hidden = true;
+        el.visualCompareButton.disabled = true;
+        el.visualStatus.textContent = "Capture a baseline screenshot to begin.";
+        el.flakyStatus.textContent = "Demo runner · no checks run yet.";
+        el.store.classList.remove("qa-visual-changed");
+        el.visualChangeButton.textContent = "Simulate visual change";
         if (state.drifted) { el.add.id = "add-to-cart"; el.add.textContent = "Add to cart"; state.drifted = false; el.warning.classList.remove("show"); }
         resetStore();
         state.tests = []; state.results = []; state.repairs = []; state.runAt = null;
@@ -461,6 +537,7 @@ Clicking checkout displays an order confirmation.</textarea>
         announce("Sample ticket loaded.");
       }
       function simulateDrift() {
+        if (state.running || state.bonusRunning) return;
         if (!state.drifted) {
           el.add.id = "add-item"; el.add.textContent = "Add item"; state.drifted = true;
           el.warning.classList.add("show"); announce("Demo locator changed. Run generated tests to repair it.");
@@ -469,6 +546,115 @@ Clicking checkout displays an order confirmation.</textarea>
           el.warning.classList.remove("show"); announce("Demo locator restored.");
         }
         resetStore();
+      }
+      function previewJiraUpdate() {
+        if (state.running || state.bonusRunning) return;
+        if (!state.results.length) {
+          el.jiraStatus.textContent = "Run the generated checks before previewing a Jira update.";
+          return;
+        }
+        const passed = state.results.filter(item => item.status === "pass").length;
+        const failed = state.results.filter(item => item.status === "fail").length;
+        const review = state.results.filter(item => item.status === "unsupported").length;
+        const outcome = failed ? "FAILED" : review ? "NEEDS REVIEW" : "PASSED";
+        state.jiraPreview = `SentinelQA test run: ${outcome}\nTicket: ${el.key.textContent} — ${el.title.value}\nResults: ${passed} passed, ${failed} failed, ${review} needs review\nAutomatic locator repairs: ${state.repairs.length}\nGenerated: ${new Date(state.runAt || Date.now()).toLocaleString()}`;
+        el.jiraPreview.textContent = state.jiraPreview;
+        el.jiraStatus.textContent = "Mock Jira comment ready · preview only; nothing was posted.";
+      }
+      async function captureVisualBaseline() {
+        if (state.running || state.bonusRunning) return;
+        if (typeof window.html2canvas !== "function") {
+          el.visualStatus.textContent = "Screenshot tool is unavailable. Check that html2canvas.min.js is deployed.";
+          return;
+        }
+        state.bonusRunning = true;
+        setBonusControlsDisabled(true);
+        el.visualStatus.textContent = "Capturing the storefront baseline…";
+        try {
+          const canvas = await window.html2canvas(el.store, { backgroundColor: "#070a0d", scale: 1, logging: false });
+          state.visualBaseline = canvas;
+          state.visualSummary = null;
+          el.visualBefore.src = canvas.toDataURL("image/png");
+          el.visualBefore.hidden = false;
+          el.visualAfter.removeAttribute("src");
+          el.visualAfter.hidden = true;
+          el.visualCompareButton.disabled = false;
+          el.visualStatus.textContent = `Baseline captured · ${canvas.width} × ${canvas.height} pixels.`;
+        } catch (error) {
+          console.error("[SentinelQA] Visual baseline capture failed.", error);
+          el.visualStatus.textContent = `Screenshot capture failed: ${error instanceof Error ? error.message : String(error)}`;
+        } finally {
+          state.bonusRunning = false;
+          setBonusControlsDisabled(false);
+        }
+      }
+      async function compareVisualSnapshots() {
+        if (state.running || state.bonusRunning || !state.visualBaseline) return;
+        state.bonusRunning = true;
+        setBonusControlsDisabled(true);
+        el.visualStatus.textContent = "Capturing and comparing the current storefront…";
+        try {
+          const current = await window.html2canvas(el.store, { backgroundColor: "#070a0d", scale: 1, logging: false });
+          el.visualAfter.src = current.toDataURL("image/png");
+          el.visualAfter.hidden = false;
+          const baseline = state.visualBaseline;
+          if (current.width !== baseline.width || current.height !== baseline.height) {
+            state.visualSummary = { status: "layout-changed", baselineWidth: baseline.width, baselineHeight: baseline.height, currentWidth: current.width, currentHeight: current.height };
+            el.visualStatus.textContent = `Layout changed · baseline ${baseline.width} × ${baseline.height}; current ${current.width} × ${current.height}.`;
+            return;
+          }
+          const before = baseline.getContext("2d").getImageData(0, 0, baseline.width, baseline.height).data;
+          const after = current.getContext("2d").getImageData(0, 0, current.width, current.height).data;
+          let changed = 0;
+          const pixels = baseline.width * baseline.height;
+          for (let offset = 0; offset < before.length; offset += 4) {
+            if (Math.abs(before[offset] - after[offset]) > 24 || Math.abs(before[offset + 1] - after[offset + 1]) > 24 || Math.abs(before[offset + 2] - after[offset + 2]) > 24 || before[offset + 3] !== after[offset + 3]) changed++;
+          }
+          const percent = pixels ? changed / pixels * 100 : 0;
+          state.visualSummary = { status: percent > 0.1 ? "differences-detected" : "no-significant-change", changedPixels: changed, totalPixels: pixels, changedPercent: Number(percent.toFixed(2)) };
+          el.visualStatus.textContent = `${percent > 0.1 ? "Visual differences detected" : "No significant visual change"} · ${percent.toFixed(2)}% of pixels differ (${changed.toLocaleString()} / ${pixels.toLocaleString()}).`;
+        } catch (error) {
+          console.error("[SentinelQA] Visual screenshot comparison failed.", error);
+          el.visualStatus.textContent = `Screenshot comparison failed: ${error instanceof Error ? error.message : String(error)}`;
+        } finally {
+          state.bonusRunning = false;
+          setBonusControlsDisabled(false);
+        }
+      }
+      function simulateVisualChange() {
+        if (state.running || state.bonusRunning) return;
+        const changed = el.store.classList.toggle("qa-visual-changed");
+        el.visualChangeButton.textContent = changed ? "Restore visual baseline" : "Simulate visual change";
+        el.visualStatus.textContent = changed ? "Visual change applied to the demo storefront · compare it with your captured baseline." : "Demo storefront appearance restored.";
+      }
+      async function runFlakyCheck() {
+        if (state.running || state.bonusRunning) return;
+        state.bonusRunning = true;
+        setBonusControlsDisabled(true);
+        const attempts = 5, results = [];
+        el.flakyStatus.textContent = "Running the same cart assertion five times…";
+        try {
+          for (let attempt = 0; attempt < attempts; attempt++) {
+            await new Promise(resolve => setTimeout(resolve, 180));
+            try {
+              const check = { kind: "add", selector: `#${el.add.id}`, expectedCents: null };
+              const detail = execute(check);
+              if (el.flakyFault.checked && (attempt === 1 || attempt === 3)) throw new Error("Injected intermittent demo failure.");
+              results.push({ attempt: attempt + 1, status: "pass", detail });
+            } catch (error) {
+              results.push({ attempt: attempt + 1, status: "fail", detail: error instanceof Error ? error.message : String(error) });
+            }
+            el.flakyStatus.textContent = `Stability run ${attempt + 1}/${attempts} · ${results.filter(item => item.status === "pass").length} passed, ${results.filter(item => item.status === "fail").length} failed.`;
+          }
+          const passed = results.filter(item => item.status === "pass").length;
+          const failed = attempts - passed;
+          const status = passed > 0 && failed > 0 ? "flaky" : failed ? "consistently-failing" : "stable";
+          state.flakySummary = { status, attempts, passed, failed, results, injectedFault: el.flakyFault.checked };
+          el.flakyStatus.textContent = status === "flaky" ? `FLAKY · ${passed}/${attempts} passed and ${failed}/${attempts} failed. Intermittent behavior detected.` : status === "stable" ? `STABLE · ${passed}/${attempts} checks passed with consistent results.` : `CONSISTENTLY FAILING · ${failed}/${attempts} checks failed. This is not classified as flaky.`;
+        } finally {
+          state.bonusRunning = false;
+          setBonusControlsDisabled(false);
+        }
       }
       function exportReport() {
         if (!state.results.length) return;
@@ -491,7 +677,8 @@ Clicking checkout displays an order confirmation.</textarea>
             locator: test.kind === "checkout" ? test.checkoutSelector : test.kind === "unsupported" ? null : test.selector,
             result: state.results.find(item => item.id === test.id) || null
           })),
-          repairs: state.repairs
+          repairs: state.repairs,
+          bonusDemos: { jiraCommentPreview: state.jiraPreview, visualComparison: state.visualSummary, flakyDetection: state.flakySummary }
         };
         const url = URL.createObjectURL(new Blob([JSON.stringify(report, null, 2)], { type: "application/json" }));
         const link = document.createElement("a");
@@ -503,15 +690,21 @@ Clicking checkout displays an order confirmation.</textarea>
       el.load.addEventListener("click", loadSample);
       el.drift.addEventListener("click", simulateDrift);
       $("export-report").addEventListener("click", exportReport);
+      el.jiraPreviewButton.addEventListener("click", previewJiraUpdate);
+      el.visualBaselineButton.addEventListener("click", captureVisualBaseline);
+      el.visualChangeButton.addEventListener("click", simulateVisualChange);
+      el.visualCompareButton.addEventListener("click", compareVisualSnapshots);
+      el.flakyRunButton.addEventListener("click", runFlakyCheck);
       el.applyPrice.addEventListener("click", () => {
+        if (state.running || state.bonusRunning) return;
         const value = Number(el.demoPrice.value);
         if (!Number.isFinite(value) || value < 0 || value > 999999.99) { announce("Enter a demo price between $0.00 and $999,999.99."); el.demoPrice.focus(); return; }
         setProductPrice(Math.round(value * 100));
         announce(`Demo product price updated to ${money(productPriceCents)}.`);
       });
-      el.add.addEventListener("click", () => { cartCount++; el.count.textContent = String(cartCount); el.total.textContent = money(cartCount * productPriceCents); el.remove.hidden = false; el.message.textContent = `${cartCount} canvas field bag${cartCount === 1 ? "" : "s"} in cart.`; });
-      el.remove.addEventListener("click", () => { cartCount = Math.max(0, cartCount - 1); el.count.textContent = String(cartCount); el.total.textContent = money(cartCount * productPriceCents); el.remove.hidden = cartCount === 0; el.message.textContent = cartCount ? `${cartCount} canvas field bag${cartCount === 1 ? "" : "s"} in cart.` : "Cart is empty."; });
-      el.checkout.addEventListener("click", () => { el.message.textContent = cartCount ? "Order confirmed — thank you for your purchase." : "Your cart is empty."; });
+      el.add.addEventListener("click", () => { if (!canChangeDemo()) return; cartCount++; el.count.textContent = String(cartCount); el.total.textContent = money(cartCount * productPriceCents); el.remove.hidden = false; el.message.textContent = `${cartCount} canvas field bag${cartCount === 1 ? "" : "s"} in cart.`; });
+      el.remove.addEventListener("click", () => { if (!canChangeDemo()) return; cartCount = Math.max(0, cartCount - 1); el.count.textContent = String(cartCount); el.total.textContent = money(cartCount * productPriceCents); el.remove.hidden = cartCount === 0; el.message.textContent = cartCount ? `${cartCount} canvas field bag${cartCount === 1 ? "" : "s"} in cart.` : "Cart is empty."; });
+      el.checkout.addEventListener("click", () => { if (!canChangeDemo()) return; el.message.textContent = cartCount ? "Order confirmed — thank you for your purchase." : "Your cart is empty."; });
       updateMetrics(); renderPlan(); renderReport();
     })();
   </script>
